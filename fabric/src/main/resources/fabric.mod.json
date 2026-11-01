@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "playguard",
+  "version": "1.0.0",
+  "name": "PlayGuard 防沉迷",
+  "description": "Server-side playtime limits, rest periods and exemptions.",
+  "authors": ["zxymiku"],
+  "license": "MIT",
+  "environment": "server",
+  "entrypoints": { "server": ["io.github.zxymiku.playguard.fabric.PlayGuardFabric"] },
+  "depends": { "fabricloader": ">=0.15.11", "minecraft": "1.20.1", "java": ">=17", "fabric-api": "*" }
+}

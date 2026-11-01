@@ -1,0 +1,21 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+[[mods]]
+modId="playguard"
+version="1.0.0"
+displayName="PlayGuard 防沉迷"
+displayTest="IGNORE_ALL_VERSION"
+description='''Server-side playtime limits with automatic rest bans and exemptions.'''
+[[dependencies.playguard]]
+modId="forge"
+mandatory=true
+versionRange="[47.1,)"
+ordering="NONE"
+side="SERVER"
+[[dependencies.playguard]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.20.2)"
+ordering="NONE"
+side="SERVER"

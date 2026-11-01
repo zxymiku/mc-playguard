@@ -1,0 +1,14 @@
+plugins { id 'fabric-loom' version '1.6.12' }
+version = '1.0.0'
+group = 'io.github.zxymiku.playguard'
+base { archivesName = 'playguard-fabric-1.20.1' }
+repositories { mavenCentral() }
+dependencies {
+    minecraft 'com.mojang:minecraft:1.20.1'
+    mappings loom.officialMojangMappings()
+    modImplementation 'net.fabricmc:fabric-loader:0.15.11'
+    modImplementation 'net.fabricmc.fabric-api:fabric-api:0.92.2+1.20.1'
+}
+java { toolchain.languageVersion = JavaLanguageVersion.of(17) }
+sourceSets.main.java.srcDirs += ['../common/src/main/java', '../core/src/main/java']
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = 17 }

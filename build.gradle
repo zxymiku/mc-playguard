@@ -1,0 +1,4 @@
+allprojects {
+    group = 'io.github.zxymiku.playguard'
+    version = '1.0.0'
+}
