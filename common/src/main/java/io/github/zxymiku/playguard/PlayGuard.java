@@ -2,6 +2,7 @@ package io.github.zxymiku.playguard;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -71,11 +72,16 @@ public final class PlayGuard {
                 if (p.bannedUntil != 0) { p.bannedUntil = 0; p.clock = new PlayClock(); }
             }
             // Source+reason identify our bans independently of the state file (including a crash).
-            for (UserBanListEntry ban : new ArrayList<>(server.getPlayerList().getBans().getEntries())) {
+            // Vanilla deliberately hides the profile getter on ban entries. Read UUIDs
+            // from its stable JSON format, then perform every change through its API.
+            for (JsonObject record : read(Path.of("banned-players.json"), JsonObject[].class, new JsonObject[0])) {
+                GameProfile profile = new GameProfile(UUID.fromString(record.get("uuid").getAsString()),
+                        record.get("name").getAsString());
+                UserBanListEntry ban = server.getPlayerList().getBans().get(profile);
                 if (owned(ban)) {
-                    PlayerState p = state.players.get(ban.getUser().getId());
+                    PlayerState p = state.players.get(profile.getId());
                     if (p != null) { p.clock = new PlayClock(); p.bannedUntil = 0; }
-                    server.getPlayerList().getBans().remove(ban.getUser());
+                    server.getPlayerList().getBans().remove(profile);
                 }
             }
             save();
