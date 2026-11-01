@@ -72,7 +72,11 @@ public final class PlayGuard {
             }
             // Source+reason identify our bans independently of the state file (including a crash).
             for (UserBanListEntry ban : new ArrayList<>(server.getPlayerList().getBans().getEntries())) {
-                if (owned(ban)) server.getPlayerList().getBans().remove(ban.getUser());
+                if (owned(ban)) {
+                    PlayerState p = state.players.get(ban.getUser().getId());
+                    if (p != null) { p.clock = new PlayClock(); p.bannedUntil = 0; }
+                    server.getPlayerList().getBans().remove(ban.getUser());
+                }
             }
             save();
             LOG.info("PlayGuard active: {} minutes play / {} minutes rest", config.playMinutes, config.restMinutes);
