@@ -7,7 +7,6 @@ import subprocess
 import sys
 import threading
 import time
-import urllib.request
 
 loader = sys.argv[1]
 root = pathlib.Path.cwd()
@@ -19,14 +18,19 @@ urls = {
     'forge': 'https://maven.minecraftforge.net/net/minecraftforge/forge/1.20.1-47.2.0/forge-1.20.1-47.2.0-installer.jar',
     'neoforge': 'https://maven.neoforged.net/releases/net/neoforged/forge/1.20.1-47.1.106/forge-1.20.1-47.1.106-installer.jar',
 }
-urllib.request.urlretrieve(urls[loader], work / 'installer.jar')
+def download(url, target):
+    subprocess.run(['curl', '--fail', '--location', '--retry', '3', '--retry-all-errors',
+                    '--user-agent', 'Mozilla/5.0 PlayGuard-CI', '--output', str(target), url],
+                   check=True, timeout=180)
+
+download(urls[loader], work / 'installer.jar')
 args = ['server', '-mcversion', '1.20.1', '-loader', '0.15.11', '-downloadMinecraft'] if loader == 'fabric' else ['--installServer']
 subprocess.run(['java', '-jar', 'installer.jar', *args], cwd=work, check=True, timeout=240)
 (work / 'mods').mkdir(exist_ok=True)
 jar = next((root / loader / 'build' / 'libs').glob('playguard-*.jar'))
 shutil.copy(jar, work / 'mods' / jar.name)
 if loader == 'fabric':
-    urllib.request.urlretrieve('https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/0.92.2+1.20.1/fabric-api-0.92.2+1.20.1.jar', work / 'mods' / 'fabric-api.jar')
+    download('https://maven.fabricmc.net/net/fabricmc/fabric-api/fabric-api/0.92.2+1.20.1/fabric-api-0.92.2+1.20.1.jar', work / 'mods' / 'fabric-api.jar')
     command = ['java', '-Xmx1G', '-jar', 'fabric-server-launch.jar', 'nogui']
 else:
     args_file = next((work / 'libraries').glob('net/*/forge/*/unix_args.txt'))
