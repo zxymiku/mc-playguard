@@ -1,0 +1,8 @@
+[extend]
+useDefault = true
+
+[[rules]]
+id = "github-installation-token-long-format"
+description = "GitHub installation token, including variable-length stateless JWT format"
+regex = '''ghs_[A-Za-z0-9.\-_]{36,}'''
+keywords = ["ghs_"]
